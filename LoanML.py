@@ -243,8 +243,8 @@ def predict_new_loan():
     self_employed = input("Self Employed (Yes/No): ")
     app_income = float(input("Applicant Income (e.g., 5000): "))
     coapp_income = float(input("Coapplicant Income (e.g., 2000): "))
-    loan_amt = float(input("Loan Amount (e.g., 150): "))
-    term = float(input("Loan Amount Term (e.g., 360): "))
+    loan_amt = float(input("Loan Amount divided by 1000 (e.g., 150): "))
+    term = float(input("Loan Amount Term in months (e.g., 360): "))
     credit = float(input("Credit History (1.0 for Good, 0.0 for Bad): "))
     area = input("Property Area (Urban/Rural/Semiurban): ")
 
