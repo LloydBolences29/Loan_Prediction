@@ -160,3 +160,65 @@ plt.xlabel("Importance Score (0 to 1)")
 plt.grid(axis='x', linestyle='--', alpha=0.7)
 #this plot shows the features importance scores from the pruned CART model
 plt.show()
+
+#for advancee pruning, we use cost complexity pruning
+#where it will let the tree grow fully and then prunee the last nodes based on the complexity parameter
+# 1. Let the tree grow to its full depth (Overfitted)
+clf = DecisionTreeClassifier(criterion='entropy', random_state=42)
+path = clf.cost_complexity_pruning_path(X_train, y_train)
+ccp_alphas = path.ccp_alphas  # This gives us a list of possible alpha values
+ccp_alphas = ccp_alphas[:-1]  # Remove the maximum alpha (which deletes the whole tree)
+
+# 2. Train a separate model for every single Alpha value
+clfs = []
+for ccp_alpha in ccp_alphas:
+    clf = DecisionTreeClassifier(criterion='entropy', random_state=42, ccp_alpha=ccp_alpha)
+    clf.fit(X_train, y_train)
+    clfs.append(clf)
+
+# 3. Record scores for each model
+train_scores = [clf.score(X_train, y_train) for clf in clfs]
+test_scores = [clf.score(X_test, y_test) for clf in clfs]
+
+# 4. Plot the "Alpha Graph"
+plt.figure(figsize=(10, 6))
+plt.plot(ccp_alphas, train_scores, marker='o', label="Training Accuracy", drawstyle="steps-post")
+plt.plot(ccp_alphas, test_scores, marker='o', label="Testing Accuracy", drawstyle="steps-post")
+plt.xlabel("Alpha (Penalty Score)")
+plt.ylabel("Accuracy")
+plt.title("Accuracy vs Alpha for Training and Testing Sets")
+plt.legend()
+plt.grid()
+plt.show()
+
+# Using the optimal Alpha from your graph
+final_model_smart = DecisionTreeClassifier(criterion='entropy', 
+                    ccp_alpha=0.011, # The winner!
+                    random_state=42)
+final_model_smart.fit(X_train, y_train)
+
+print("Final model optimized with ccp_alpha=0.01")
+
+# --- FINAL COMPARISON ---
+
+# 1. Calculate Accuracy of the Smart Model
+smart_acc = final_model_smart.score(X_test, y_test)
+
+# 2. Print a "Scoreboard" to compare all approaches
+print("\n" + "="*40)
+print("      FINAL MODEL SHOWDOWN      ")
+print("="*40)
+print(f"1. ID3 (Max Depth 3):      {acc_id3 * 100:.2f}%")
+print(f"2. CART (Max Depth 3):     {acc_cart * 100:.2f}%")
+print(f"3. Smart Alpha (0.011):    {smart_acc * 100:.2f}%")
+print("="*40)
+
+# 3. Visualize the Smart Alpha Tree
+plt.figure(figsize=(15, 8))
+plot_tree(final_model_smart, 
+        feature_names=X.columns, 
+        class_names=["Rejected", "Approved"], 
+        filled=True, 
+        fontsize=10)
+plt.title(f"Final Optimized Tree (Alpha = 0.011) | Accuracy: {smart_acc*100:.2f}%")
+plt.show()
