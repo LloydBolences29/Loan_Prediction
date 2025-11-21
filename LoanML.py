@@ -69,7 +69,7 @@ acc_cart = accuracy_score(y_test, model_cart.predict(X_test))
 print(f"ID3 (Entropy) Accuracy: {acc_id3 * 100:.2f}%")
 print(f"CART (Gini) Accuracy:   {acc_cart * 100:.2f}%")
 
-# Lists for comparison
+# Lists for comparison of the algorithms at different depths
 id3_scores = []
 cart_scores = []
 
@@ -103,7 +103,7 @@ plt.ylabel("Test Accuracy")
 plt.xticks(depths)
 plt.legend()
 plt.grid(True)
-#this plot shows the accuracy of both models at different tree depths
+#this plot shows the accuracy of both models at 20 depths
 plt.show()
 
 # --- THE FINAL PRUNED MODEL ---
