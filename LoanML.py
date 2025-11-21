@@ -193,12 +193,11 @@ plt.show()
 
 # Using the optimal Alpha from your graph
 final_model_smart = DecisionTreeClassifier(criterion='entropy', 
-                    ccp_alpha=0.011, # The winner!
+                    ccp_alpha=0.011, 
                     random_state=42)
 final_model_smart.fit(X_train, y_train)
 
-print("Final model optimized with ccp_alpha=0.01")
-
+print("Final model optimized with ccp_alpha=0.011")
 # --- FINAL COMPARISON ---
 
 # 1. Calculate Accuracy of the Smart Model
