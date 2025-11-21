@@ -221,3 +221,7 @@ plot_tree(final_model_smart,
         fontsize=10)
 plt.title(f"Final Optimized Tree (Alpha = 0.011) | Accuracy: {smart_acc*100:.2f}%")
 plt.show()
+#In Smart Pruning, we set a 'performance threshold' called Alpha (0.011).
+#The model grows fully, then checks every branch starting from the bottom. 
+# If a branch doesn't improve the model's accuracy by at least 1.1% (the Alpha score), 
+# we consider it 'unnecessary complexity' and cut it off
