@@ -225,3 +225,70 @@ plt.show()
 #The model grows fully, then checks every branch starting from the bottom. 
 # If a branch doesn't improve the model's accuracy by at least 1.1% (the Alpha score), 
 # we consider it 'unnecessary complexity' and cut it off
+
+
+#For user Testing data
+
+def predict_new_loan():
+    print("\n" + "="*40)
+    print("REAL-TIME LOAN PREDICTOR")
+    print("="*40)
+    
+    # 1. Collect Input (Raw Text)
+    # We ask for the exact same columns as your CSV
+    gender = input("Gender (Male/Female): ")
+    married = input("Married (Yes/No): ")
+    dependents = input("Dependents (0, 1, 2, 3+): ")
+    education = input("Education (Graduate/Not Graduate): ")
+    self_employed = input("Self Employed (Yes/No): ")
+    app_income = float(input("Applicant Income (e.g., 5000): "))
+    coapp_income = float(input("Coapplicant Income (e.g., 2000): "))
+    loan_amt = float(input("Loan Amount (e.g., 150): "))
+    term = float(input("Loan Amount Term (e.g., 360): "))
+    credit = float(input("Credit History (1.0 for Good, 0.0 for Bad): "))
+    area = input("Property Area (Urban/Rural/Semiurban): ")
+
+    # 2. Create a DataFrame
+    # We map these inputs to the original CSV column names
+    input_data = pd.DataFrame({
+        'Gender': [gender],
+        'Married': [married],
+        'Dependents': [dependents],
+        'Education': [education],
+        'Self_Employed': [self_employed],
+        'Applicant_Income': [app_income],
+        'Coapplicant_Income': [coapp_income],
+        'Loan_Amount': [loan_amt],
+        'Loan_Amount_Term': [term],
+        'Credit_History': [credit],
+        'Property_Area': [area]
+    })
+
+    # 3. Pre-Process (The Magic Step)
+    # Convert text to numbers just like we did for training
+    input_prepared = pd.get_dummies(input_data, drop_first=True)
+
+    # CRITICAL: Align columns with the Training Data (X)
+    # If the user enters "Male", get_dummies creates "Gender_Male".
+    # But if they enter "Female", "Gender_Male" won't exist!
+    # .reindex() ensures we have ALL the columns the model expects (X.columns), 
+    # and fills missing ones with 0.
+    input_prepared = input_prepared.reindex(columns=X.columns, fill_value=0)
+
+    # 4. Predict using the Smart Model
+    prediction = final_model_smart.predict(input_prepared)
+    probability = final_model_smart.predict_proba(input_prepared)
+
+    # 5. Show Result
+    print("\n" + "-"*30)
+    if prediction[0] == 1:
+        print(f"RESULT: APPROVED ✅")
+        print(f"Confidence: {probability[0][1] * 100:.2f}%")
+    else:
+        print(f"RESULT: REJECTED ❌")
+        print(f"Reason: Likely due to Credit History or Income.")
+        print(f"Confidence: {probability[0][0] * 100:.2f}%")
+    print("-"*30)
+
+# Run the function
+predict_new_loan()
